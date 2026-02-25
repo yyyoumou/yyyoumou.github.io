@@ -1,2 +1,3 @@
 # yyyoumou.github.io
-for freshman's try
+just for freshman's try.
+It just the function of education and learning and nothing much.
