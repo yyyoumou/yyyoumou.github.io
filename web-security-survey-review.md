@@ -24,3 +24,9 @@ Reading this paper not only broadened my technical horizon but also provided exc
 - **provide a comprehensive review of**: a perfect phrase to start a summary.
 - **tackle**: to deal with a difficult challenge efficiently.
 - **overly ambitious and wishful**: a critical phrase to evaluate unrealistic expectations.
+
+### Reference
+- **Original Paper:** [Formal methods for web security: A survey](https://www.sciencedirect.com/science/article/pii/S2352220816301055)
+
+### Future Work & Personal Thoughts
+*Note: As a sophomore currently focusing on the fundamentals of OS and network protocols, some of the advanced formal verification concepts in this paper are still over my head.* *However, I am documenting the core abstract and conclusion here as my initial exposure to Web Security. I plan to revisit this post and add my own hands-on technical analysis once I start practicing with web vulnerability ranges (like SQLi and XSS) next semester.*
