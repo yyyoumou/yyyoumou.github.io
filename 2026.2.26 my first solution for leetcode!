@@ -14,7 +14,8 @@ I know this might seem like simple work to some, but this is a massive milestone
 ## My C++ Solution & Learning Notes
 
 And here my solution:
-```class Solution {
+```cpp
+class Solution {
 public:
     int magicalString(int n) {
        if(n<=0) return 0;
@@ -47,4 +48,5 @@ for(int i=0;i<n;i++){
 }
 return count;
         }
-};```
+};
+```
