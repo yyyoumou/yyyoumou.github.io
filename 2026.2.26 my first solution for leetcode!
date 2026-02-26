@@ -1,20 +1,17 @@
-# I know this is just a simple work but this is really a milestone for me 
-## I have worked out my **first** solution for leetcode 
+# Milestone: My First LeetCode Solution!
 
-Here are the title:
-神奇字符串 s 仅由 '1' 和 '2' 组成，并需要遵守下面的规则：
+I know this might seem like simple work to some, but this is a massive milestone for me. I have finally worked out my **first** independent solution for a LeetCode problem! 
 
-将连续相同字符组 '1' 和 '2' 长度的序列连接起来会生成字符串 s 本身。
-s 的前几个元素是 s = "1221121221221121122……" 。如果将 s 中连续的若干 1 和 2 进行分组，可以得到 "1 22 11 2 1 22 1 22 11 2 11 22 ......" 。每组中 1 或者 2 的出现次数分别是 "1 2 2 1 1 2 1 2 2 1 2 2 ......" 。上面的出现次数正是 s 自身。
+## Problem: 481. Magical String (Medium)
 
-给你一个整数 n ，返回在神奇字符串 s 的前 n 个数字中 1 的数目。
-示例 1：
-输入：n = 6
-输出：3
-解释：神奇字符串 s 的前 6 个元素是 “122112”，它包含三个 1，因此返回 3 。 
-示例 2：
-输入：n = 1
-输出：1
+神奇字符串 `s` 仅由 `'1'` 和 `'2'` 组成，并需要遵守下面的规则：
+将连续相同字符组 `'1'` 和 `'2'` 长度的序列连接起来会生成字符串 `s` 本身。
+
+`s` 的前几个元素是 `s = "1221121221221121122……"` 。如果将 `s` 中连续的若干 1 和 2 进行分组，可以得到 `"1 22 11 2 1 22 1 22 11 2 11 22 ......"` 。每组中 1 或者 2 的出现次数分别是 `"1 2 2 1 1 2 1 2 2 1 2 2 ......"` 。上面的出现次数正是 `s` 自身。
+
+**任务：** 给你一个整数 `n` ，返回在神奇字符串 `s` 的前 `n` 个数字中 `1` 的数目。
+
+## My C++ Solution & Learning Notes
 
 And here my solution:
 ```class Solution {
