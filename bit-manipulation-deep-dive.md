@@ -28,6 +28,7 @@ public:
         return result;
     }
 };
+```
 2. Brian Kernighan's Algorithm: Time Complexity Reduction
 When counting the number of 1 bits in an integer (Hamming Weight), a naive approach shifts the bits 32 times. However, Brian Kernighan's Algorithm provides a brilliant shortcut to skip the zeros.
 
