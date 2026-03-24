@@ -11,8 +11,7 @@ This post documents my learning progression, focusing on the core concepts and o
 The first major milestone was learning how to optimize solutions from brute-force $O(n^2)$ approaches to more efficient $O(n)$ time complexities using specific array techniques.
 
 * **Two Pointers:** This technique involves using two indices to iterate through a data structure (usually an array or string). Depending on the problem, the pointers might move in the same direction to filter data or start at opposite ends and move towards the center. It is highly effective for sorted arrays, allowing for linear time complexity by eliminating unnecessary comparisons.
-* **Sliding Window:** 
-    This is an optimal approach for problems involving "contiguous subarrays." The logic relies on maintaining a window (defined by a left and right pointer) that expands by moving the right pointer and contracts by moving the left pointer when a specific condition is broken. This dynamically adjusts the search space in a single pass.
+* **Sliding Window:** This is an optimal approach for problems involving "contiguous subarrays." The logic relies on maintaining a window (defined by a left and right pointer) that expands by moving the right pointer and contracts by moving the left pointer when a specific condition is broken. This dynamically adjusts the search space in a single pass.
 
 ---
 
@@ -31,7 +30,6 @@ Moving beyond basic arrays required a solid understanding of memory references a
 This phase involved shifting from linear iteration to spatial traversal, which significantly increased the complexity of the problems.
 
 ### Binary Trees and Recursion
-
 Tree problems solidified my understanding of recursion. By breaking down traversals into `Root`, `Left`, and `Right` operations, I learned how to process data from the bottom up. Information is gathered at the leaf nodes and returned up the call stack to the root.
 
 ### Depth-First Search (DFS) in 2D Grids
@@ -40,7 +38,6 @@ DFS explores as far as possible along each branch before backtracking. When appl
 2. **Boundary-First Traversal:** For problems like *Number of Enclaves* (LC 1020), scanning the entire grid is inefficient. A better approach is to run DFS exclusively from the boundaries to eliminate all cells connected to the edge, leaving only the isolated components in the center.
 
 ### Breadth-First Search (BFS) and Shortest Paths
-
 While DFS goes deep, BFS explores level by level. It is the standard algorithm for finding the shortest path in an unweighted graph.
 * **Multi-Source BFS:** In problems like *Rotting Oranges* (LC 994), multiple starting points exist. The solution involves pushing all initial sources into a `queue<pair<int, int>>` and expanding the search space simultaneously layer by layer.
 * **Distance Tracking:** My biggest realization came during the *01 Matrix* problem (LC 542). Instead of tracking global layers or counts, you can directly compute the distance by inheriting the value from the previous node: `mat[nr][nc] = mat[r][c] + 1`. To avoid revisiting nodes, I learned to initialize unvisited targets with a marker value (like `-1`) during the first pass, creating a clean and efficient condition for the BFS traversal.
