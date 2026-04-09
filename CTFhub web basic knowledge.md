@@ -192,4 +192,28 @@ with open(dictionary, "r") as f:
 
 ---
 **Status:** 🟩 All HTTP Basics Captured.
-**Flag:** `ctfhub{bab7f2f722a9b86e4546b3f0}`
+
+##  0x05 响应包源代码查看 (Source Code Analysis)
+
+###  原理简述
+Web 开发人员有时会在 HTML、JS 或 CSS 代码中使用注释（Comments）来记录调试信息或临时数据。由于浏览器渲染时会下载完整的静态资源，这些被“隐藏”在注释中的敏感信息可以被直接通过查看源码或抓取原始响应包获取。
+
+###  漏洞利用
+**核心思路：** 不要被页面的 UI（如复杂的小游戏）分散注意力，直接审计原始文本。
+
+**方法一：Python 自动化提取**
+利用 `response.text` 直接打印全部源码，并配合全局搜索（Ctrl+F）寻找 `ctfhub{` 关键字。
+```python
+import requests
+url = "http://<Target_IP>:<Port>/"
+response = requests.get(url)
+# 审计正文内容，Flag 通常隐藏在 注释中
+print(response.text)
+```
+
+**方法二：浏览器开发者工具**
+按 `F12` 进入 `Elements` 选项卡，或者右键“查看网页源代码”，寻找高亮显示的灰色注释块。
+
+---
+###  架构师总结
+在 Web 安全中，**“看不见”不代表“不存在”**。前端的所有静态资源对客户端而言都是透明的。永远不要在 HTML/JS 注释里存放任何敏感数据（如密码、API Key、Flag）。
