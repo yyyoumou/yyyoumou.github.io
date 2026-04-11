@@ -1,0 +1,98 @@
+import requests
+import re
+
+# ==========================================
+# 第一部分：全局变量与初始配置区
+# ==========================================
+
+# 【知识点：入口配置】
+# 这里是你填入靶场 URL 的地方。
+# 必须以斜杠 (/) 结尾，因为后续提取到的 href 都是相对路径（如 "1/"）。
+# 拼接时如果没有斜杠，会导致 URL 变成 .../flag_in_here1/ 从而引发 404 错误。
+base_url = "http://challenge-f9737e26563259c0.sandbox.ctfhub.com:10800/flag_in_here/"
+
+# 【知识点：BFS 的核心数据结构 - 队列 (Queue)】
+# urls_to_visit 是我们的“待处理队列”。
+# 初始状态下，只有大门（base_url）在队列中。
+urls_to_visit = [base_url]
+
+# 【知识点：防死循环数据结构 - 集合 (Set)】
+# visited_urls 用于记录已经访问过的绝对路径。
+# 使用 Set 而不是 List 的原因是：Set 在 Python 中基于哈希表实现，查找速度是 O(1)，极大提高在大规模爬取时的效率。
+visited_urls = set()
+
+
+# ==========================================
+# 第二部分：自动化遍历引擎 (Loop 与 BFS 控制)
+# ==========================================
+
+# 【知识点：主控 Loop】
+# 只要待处理队列中还有 URL，这个循环就会一直执行。
+# 这是爬虫的动力源泉。
+while urls_to_visit:
+    
+    # 【知识点：BFS 的具体体现 - 出队操作】
+    # pop(0) 是这段代码成为“广度优先搜索 (BFS)”的灵魂。
+    # 每次强制从列表的最左侧（索引为0，即最早加入的URL）取出一个元素。
+    # 这种“先进先出 (FIFO)”的机制保证了爬虫会先扫完第1层的所有文件夹，再去扫第2层。
+    current_url = urls_to_visit.pop(0)
+
+    # 【知识点：状态校验】
+    # 如果当前 URL 已经在历史记录中，直接跳过本次循环，防止重复发包。
+    if current_url in visited_urls:
+        continue
+
+    # 标记当前 URL 为已访问
+    visited_urls.add(current_url)
+    print(f"[*] 正在请求: {current_url}")
+
+    try:
+        # 发起 HTTP GET 请求。
+        # 设置 timeout=3 是工程化爬虫的标配，防止因为某个无响应的页面导致整个程序永久卡死。
+        response = requests.get(current_url, timeout=3)
+        html_content = response.text
+
+        # 【知识点：信息提取 (正则表达式)】
+        # r'href="(.*?)"' 的含义：
+        # href=" 是固定的匹配前缀。
+        # (.*?) 是非贪婪捕获组，意思提取出引号里面的所有字符，直到遇到下一个双引号为止。
+        links = re.findall(r'href="(.*?)"', html_content)
+
+        # 遍历当前页面提取出的所有链接
+        for link in links:
+            
+            # 【知识点：相对路径陷阱规避】
+            # 目录列表中必定包含返回上一级的链接 "../"。
+            # 如果不将此过滤，爬虫会在当前目录和上一级目录之间无限循环。
+            if link == "../":
+                continue
+
+            # 拼接绝对路径：当前所在的 URL + 提取到的相对目录名
+            next_url = current_url + link
+
+            # 【知识点：终极目标判定】
+            # 在将新链接加入队列前，先进行特征校验。
+            # 如果链接本身包含我们要找的 flag.txt，说明目标已暴露。
+            if "flag.txt" in link:
+                print(f"\n[+] 发现目标文件地址: {next_url}")
+                
+                # 直接请求目标文件，获取正文
+                flag_resp = requests.get(next_url)
+                print(f"[+] 文件内容:\n{flag_resp.text}")
+                
+                # 调用 exit() 终止整个 Python 进程，因为任务已经完成。
+                exit() 
+
+            # 【知识点：BFS 的具体体现 - 入队操作】
+            # 如果这个新发现的链接既没有被访问过，也不在当前的待办队列中。
+            # 使用 append() 将它加入到队列的末尾。
+            # 配合前面的 pop(0)，构成了完整的 FIFO (先进先出) 队列逻辑。
+            if next_url not in visited_urls and next_url not in urls_to_visit:
+                urls_to_visit.append(next_url)
+
+    except Exception as e:
+        # 异常处理：网络请求可能会产生各种异常（如连接重置）。
+        # 捕获异常后使用 pass 忽略它，让 while 循环继续处理下一个 URL。
+        pass
+
+print("\n[-] 队列已清空，遍历结束。未找到包含 flag.txt 的文件。")
